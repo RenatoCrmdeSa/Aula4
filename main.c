@@ -9,6 +9,7 @@ void offset(FILE *arq);
 void insercao();
 void leitura();
 void menu();
+void remocao();
 typedef struct reg{
 
 int tam;
@@ -107,7 +108,7 @@ printf("INSERÇÂO DE AMIGUINHO\n");
 
         sprintf(buffer,"%d|%s|%s|",cod,nome,telefone);
         tam = strlen(buffer);
-        fwrite(&tam, sizeof(int), 1, arq);
+        fwrite(&tam,sizeof(int),1,arq);
         fwrite(buffer, sizeof(char), tam, arq);
 
 
@@ -116,7 +117,7 @@ printf("INSERÇÂO DE AMIGUINHO\n");
 
       // while
         // printf("%d",&cod);
-
+fclose(arq);
 
 
 }
@@ -146,15 +147,25 @@ offset(arq);
         tam_campo = pega_campo(buffer,&pos,buffer2);
         //printf("%d %d  %d",tam,tam_campo,pos);
 
-        while (pos <= tam)
-          {
+       // while (pos <= tam){
+
 
             printf("tamanho: %d\n",tam_campo);
-            printf("campo: %s\n\n",buffer2);
+            printf("Codigo: %s\n\n",buffer2);
             printf("Posicao no registro:%d\n",pos);
 
             tam_campo = pega_campo(buffer,&pos,buffer2);
-          }
+               printf("tamanho: %d\n",tam_campo);
+            printf("Nome: %s\n\n",buffer2);
+            printf("Posicao no registro:%d\n",pos);
+
+            tam_campo = pega_campo(buffer,&pos,buffer2);
+               printf("tamanho: %d\n",tam_campo);
+            printf("Telefone: %s\n\n",buffer2);
+            printf("Posicao no registro:%d\n",pos);
+
+            tam_campo = pega_campo(buffer,&pos,buffer2);
+        //  }
           offset(arq);
         tam= pega_registro(arq,buffer);
        // getch();
@@ -177,7 +188,7 @@ int sel;
 
     printf("OLA,SOU MENUZINHO SEU AMIGUINHO!!!\n");
     printf("VAMOS BRINCA!SELECIONE A OPÇÂO!\n");
-    printf("1-INSERIR AMIGUINHO\n2-FICAR DE MAL\n3-COMPACTAR AQUIVO\n4-LISTAR AMIGUINHOS\n");
+    printf("1-INSERIR AMIGUINHO\n2-FICAR DE MAL\n3-COMPACTAR AQUIVO\n4-LISTAR AMIGUINHOS\n0-Sair\n");
     scanf("%d",&sel);
     switch(sel){
     case 1:
@@ -185,7 +196,8 @@ int sel;
         menu();
         break;
     case 2  :
-        printf("DIGA O AMIGUINHO FEIO");
+
+        remocao();
         break;
     case 3:
         printf("COMPACTA ARQUIVO");
@@ -193,6 +205,8 @@ int sel;
     case 4:
         leitura();
         menu();
+    case 0:
+        return;
 /*
        while(fread(&buffer,sizeof(char),2,arq)){
         //printf("%c",buffer);
@@ -234,3 +248,53 @@ int sel;
 
 
 }
+
+
+
+
+
+void remocao(){
+
+
+FILE *arq;
+
+    char nome[50];
+    char telefone[20];
+    char codigo[5];
+
+    char buffer[90];
+    char buffer2[30];
+    arq=fopen("amigos.dad","r+b");
+        fseek(arq,0,SEEK_SET);
+
+ int cod,tam,tam_campo,cont,pos;
+
+
+printf("Digite o codigo do amiguinho a ser removido");
+scanf("%s",&codigo);
+         tam= pega_registro(arq,buffer);
+
+
+         while (tam> 0)
+   {
+             pos=0;
+        tam_campo = pega_campo(buffer,&pos,buffer2);
+        //printf("%d %d  %d",tam,tam_campo,pos);
+
+
+                if(!strcmp(codigo,buffer2)){
+            printf("tamanho: %d\n",tam_campo);
+            printf("Codigo: %s\n\n",buffer2);
+            printf("Posicao no registro:%d\n",pos);
+            offset(arq);
+        }
+
+
+        tam= pega_registro(arq,buffer);
+       // getch();
+   }
+
+
+}
+
+
