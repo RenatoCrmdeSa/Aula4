@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+int pega_campo(char *p_registro, int *p_pos, char *p_campo);
+int pega_registro(FILE *p_out, char *p_reg);
+
+
 typedef struct reg{
 
 int tam;
@@ -23,11 +28,11 @@ int main()
     char telefone[20];
     char codigo[5];
     char pipe;
-    char buffer[2];
-    char buffer2;
+    char buffer[90];
+    char buffer2[30];
 
 
-    int sel,cod,tam,cont;
+    int sel,cod,tam,tam_campo,cont,pos;
     pipe='|';
     printf("OLA,SOU MENUZINHO SEU AMIGUINHO!!!\n");
     printf("VAMOS BRINCA!SELECIONE A OPÇÂO!\n");
@@ -36,7 +41,7 @@ int main()
     switch(sel){
     case 1:
         printf("INSERÇÂO DE AMIGUINHO\n");
-        arq=fopen("amigos.dad","a+");
+        arq=fopen("amigos.dad","a+b");
 
         printf("Digite o codido do amiguinho\n");
         scanf("%d",&cod);
@@ -48,21 +53,14 @@ int main()
         scanf("%s",&telefone);
         fflush(stdin);
         itoa(cod,codigo,10);
-       tam=strlen(nome)+strlen(telefone)+strlen(codigo)+3*sizeof(char);
-       printf("Tamanho do registro:%d\/",tam);
 
-       fprintf(arq,"%d",tam);
-             printf("ORA");
-       fprintf(arq,"%d",cod);
-            printf("ORA");
-       fprintf(arq,"|");
-            printf("ORA");
-       fprintf(arq,"%s",nome);
-            printf("ORA");
-       fprintf(arq,"|");
-       fprintf(arq,"%s",telefone);
-       fprintf(arq,"|");
-       fprintf(arq,"\n");
+
+
+        sprintf(buffer,"%d|%s|%s|",cod,nome,telefone);
+        tam = strlen(buffer);
+        fwrite(&tam, sizeof(int), 1, arq);
+        fwrite(buffer, sizeof(char), tam, arq);
+
 
        // fseek(arq,i,SEEK_CUR);
 
@@ -78,9 +76,9 @@ int main()
         printf("COMPACTA ARQUIVO");
         break;
     case 4:
-        arq=fopen("amigos.dad","r");
+        arq=fopen("amigos.dad","r+b");
         fseek(arq,0,SEEK_SET);
-
+/*
        while(fread(&buffer,sizeof(char),2,arq)){
         //printf("%c",buffer);
 
@@ -111,11 +109,75 @@ int main()
         fread(&buffer2,sizeof(char),2,arq);
         printf("Ora");
         printf("%c",buffer2);
-       }
+       }*/
+
+         tam= pega_registro(arq,buffer);
+
+
+         while (tam> 0)
+   {
+        pos = 0;
+        tam_campo = pega_campo(buffer,&pos,buffer2);
+        //printf("%d %d  %d",tam,tam_campo,pos);
+
+        while (pos <= tam)
+          {
+
+            printf("tamanho: %d\n",tam_campo);
+            printf("campo: %s\n\n",buffer2);
+            printf("Posicao:%d\n",pos);
+            tam_campo = pega_campo(buffer,&pos,buffer2);
+          }
+        tam= pega_registro(arq,buffer);
+       // getch();
+   }
+
+  fclose(arq);
+
+
+
+
         break;
 
 
 
     }
 
+}
+
+
+
+
+
+
+int pega_registro(FILE *p_out, char *p_reg)
+{
+     int bytes;
+
+     if (!fread(&bytes, sizeof(int), 1, p_out))
+       return 0;
+     else {
+            fread(p_reg, bytes, 1, p_out);
+            return bytes;
+          }
+}
+
+int pega_campo(char *p_registro, int *p_pos, char *p_campo)
+{
+     char ch;
+     int i=0;
+
+     p_campo[i] = '\0';
+
+     ch = p_registro[*p_pos];
+     while ((ch != '|') && (ch!=EOF))
+      {
+           p_campo[i] = ch;
+           i++;
+           ch = p_registro[++(*p_pos)];
+      }
+     ++(*p_pos);
+     p_campo[i] = '\0';
+
+     return strlen(p_campo);
 }
