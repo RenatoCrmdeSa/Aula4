@@ -5,7 +5,7 @@
 
 int pega_campo(char *p_registro, int *p_pos, char *p_campo);
 int pega_registro(FILE *p_out, char *p_reg);
-
+void offset(FILE *arq);
 
 typedef struct reg{
 
@@ -110,13 +110,13 @@ int main()
         printf("Ora");
         printf("%c",buffer2);
        }*/
-
+        offset(arq);
          tam= pega_registro(arq,buffer);
 
 
          while (tam> 0)
    {
-        pos = 0;
+            pos = 0;
         tam_campo = pega_campo(buffer,&pos,buffer2);
         //printf("%d %d  %d",tam,tam_campo,pos);
 
@@ -125,9 +125,11 @@ int main()
 
             printf("tamanho: %d\n",tam_campo);
             printf("campo: %s\n\n",buffer2);
-            printf("Posicao:%d\n",pos);
+            printf("Posicao no registro:%d\n",pos);
+
             tam_campo = pega_campo(buffer,&pos,buffer2);
           }
+          offset(arq);
         tam= pega_registro(arq,buffer);
        // getch();
    }
@@ -180,4 +182,11 @@ int pega_campo(char *p_registro, int *p_pos, char *p_campo)
      p_campo[i] = '\0';
 
      return strlen(p_campo);
+}
+
+void offset(FILE *arq){
+int oft;
+ oft=ftell(arq);
+printf("Offset:%d\n",oft);
+
 }
