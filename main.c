@@ -88,12 +88,13 @@ void insercao(){
     char buffer2[90];
     char buffer3[30];
 
- int cod,tam,tam2,tam_campo,cont,pos;
+ int cod,tam,tam2,tam3,tam_campo,cont,pos;
 int oft,oft2;
 
 printf("INSERÇÂO DE AMIGUINHO\n");
-        arq=fopen("amigos.dad","r+b");
-
+        if((arq=fopen("amigos.dad","r+b")==NULL)){
+            arq=fopen("amigos.dad","w+b");}
+          else{arq=fopen("amigos.dad","r+b");}
         printf("Digite o codido do amiguinho\n");
         scanf("%d",&cod);
         fflush(stdin);
@@ -126,15 +127,30 @@ oft=ftell(arq);
         printf("\n codigo %c\n",codigo);
         printf("batata");
 
-        if((codigo==buffer3[0]) &&(tam<=tam2){
+        if((codigo==buffer3[0]) &&(tam<=tam2)){
 
 printf("ORRAAAAAAA\n");
-
+            oft2=ftell(arq);
             fseek(arq,oft,SEEK_SET);
+            tam3=tam2 - tam;
+             if(tam3>=3){
 
            fwrite(&tam,sizeof(int),1,arq);
         fwrite(buffer, sizeof(char), tam, arq);
 
+
+            fwrite(&tam3,sizeof(int),1,arq);
+
+            fprintf(arq,"*");
+
+            fwrite(&oft2,sizeof(int),1,arq);
+             }
+           else{
+
+           fwrite(&tam2,sizeof(int),1,arq);
+        fwrite(buffer, sizeof(char), tam, arq);
+
+           }
         return;
         }
 
@@ -298,7 +314,7 @@ FILE *arq;
     char nome[50];
     char telefone[20];
     char codigo[5];
-
+    char ast;
     char buffer[90];
     char buffer2[30];
     arq=fopen("amigos.dad","r+b");
@@ -307,7 +323,7 @@ FILE *arq;
  int cod,tam,tam_campo,cont,pos;
  int oft,oft2;
 
-
+ast='*';
 printf("Digite o codigo do amiguinho a ser removido");
 scanf("%s",&codigo);
          tam= pega_registro(arq,buffer);
@@ -330,9 +346,10 @@ oft=ftell(arq);
 
             fwrite(&tam,sizeof(int),1,arq);
 
-            fprintf(arq,"* ");
+            fprintf(arq,"*");
 
             fwrite(&oft2,sizeof(int),1,arq);
+
         fseek(arq,oft2,SEEK_SET);
         }
     oft=ftell(arq);
