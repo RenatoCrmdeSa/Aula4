@@ -82,16 +82,17 @@ void insercao(){
 
     char nome[50];
     char telefone[20];
-    char codigo[5];
+    char codigo;
 
     char buffer[90];
-    char buffer2[30];
+    char buffer2[90];
+    char buffer3[30];
 
- int cod,tam,tam_campo,cont,pos;
-
+ int cod,tam,tam2,tam_campo,cont,pos;
+int oft,oft2;
 
 printf("INSERÇÂO DE AMIGUINHO\n");
-        arq=fopen("amigos.dad","a+b");
+        arq=fopen("amigos.dad","r+b");
 
         printf("Digite o codido do amiguinho\n");
         scanf("%d",&cod);
@@ -102,25 +103,61 @@ printf("INSERÇÂO DE AMIGUINHO\n");
         printf("Digite o telefone do amiguinho\n");
         scanf("%s",&telefone);
         fflush(stdin);
-        itoa(cod,codigo,10);
+
 
 
 
         sprintf(buffer,"%d|%s|%s|",cod,nome,telefone);
         tam = strlen(buffer);
-        fwrite(&tam,sizeof(int),1,arq);
+printf("tamanho %d\n",tam);
+
+       codigo='*';
+       fseek(arq,0,SEEK_SET);
+        tam2= pega_registro(arq,buffer2);
+oft=ftell(arq);
+
+         while (tam2> 0)
+   {    printf("\n%s\n",buffer2);
+        printf("Tamanho2 : %d\n",tam2);
+
+        pos=0;
+        tam_campo = pega_campo(buffer2,&pos,buffer3);
+        printf("\n comparacao%c\n",buffer3[0]);
+        printf("\n codigo %c\n",codigo);
+        printf("batata");
+
+        if(codigo==buffer3[0]){
+
+printf("ORRAAAAAAA\n");
+
+            fseek(arq,oft,SEEK_SET);
+
+           fwrite(&tam,sizeof(int),1,arq);
+        fwrite(buffer, sizeof(char), tam, arq);
+
+        return;
+        }
+
+
+    oft=ftell(arq);
+
+        tam2= pega_registro(arq,buffer2);
+
+   }
+  fwrite(&tam,sizeof(int),1,arq);
         fwrite(buffer, sizeof(char), tam, arq);
 
 
+fclose(arq);
        // fseek(arq,i,SEEK_CUR);
 
 
       // while
         // printf("%d",&cod);
-fclose(arq);
 
 
-}
+   }
+
 
 
 void leitura(){
@@ -142,7 +179,7 @@ offset(arq);
 
 
          while (tam> 0)
-   {
+   {        printf("Tamanho do registro:%d\n",tam);
             pos = 0;
         tam_campo = pega_campo(buffer,&pos,buffer2);
         //printf("%d %d  %d",tam,tam_campo,pos);
@@ -268,12 +305,13 @@ FILE *arq;
         fseek(arq,0,SEEK_SET);
 
  int cod,tam,tam_campo,cont,pos;
+ int oft,oft2;
 
 
 printf("Digite o codigo do amiguinho a ser removido");
 scanf("%s",&codigo);
          tam= pega_registro(arq,buffer);
-
+oft=ftell(arq);
 
          while (tam> 0)
    {
@@ -283,12 +321,21 @@ scanf("%s",&codigo);
 
 
                 if(!strcmp(codigo,buffer2)){
+                oft2=ftell(arq);
             printf("tamanho: %d\n",tam_campo);
             printf("Codigo: %s\n\n",buffer2);
             printf("Posicao no registro:%d\n",pos);
-            offset(arq);
-        }
 
+            fseek(arq,oft,SEEK_SET);
+
+            fwrite(&tam,sizeof(int),1,arq);
+
+            fprintf(arq,"* ");
+
+            fwrite(&oft2,sizeof(int),1,arq);
+        fseek(arq,oft2,SEEK_SET);
+        }
+    oft=ftell(arq);
 
         tam= pega_registro(arq,buffer);
        // getch();
