@@ -126,7 +126,7 @@ oft=ftell(arq);
         printf("\n codigo %c\n",codigo);
         printf("batata");
 
-        if(codigo==buffer3[0]){
+        if((codigo==buffer3[0]) &&(tam<=tam2){
 
 printf("ORRAAAAAAA\n");
 
